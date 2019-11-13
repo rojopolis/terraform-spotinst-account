@@ -51,11 +51,13 @@ resource "aws_iam_role_policy_attachment" "spotinst" {
 
 resource "null_resource" "account" {
     provisioner "local-exec" {
+        interpreter = ["/bin/bash", "-c"]
         command = "${local.cmd} create ${var.name}"
     }
 
     provisioner "local-exec" {
         when = "destroy"
+        interpreter = ["/bin/bash", "-c"]
         command = <<-EOT
             ID=$(${local.cmd} get --filter=name=${var.name} --attr=account_id) &&\
             ${local.cmd} delete "$ID"
@@ -75,6 +77,7 @@ data "external" "account" {
 resource "null_resource" "account_assoiation" {
     depends_on = [aws_iam_role.spotinst]
     provisioner "local-exec" {
+        interpreter = ["/bin/bash", "-c"]
         command = "${local.cmd} set-cloud-credentials ${local.account_id} ${aws_iam_role.spotinst.arn} ${local.external_id}"
     } 
 }
