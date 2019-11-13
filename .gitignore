@@ -1,0 +1,6 @@
+*.tfplan
+.terraform
+.vscode
+*.egg-info
+*.tfstate*
+.envrc_local
